@@ -1,14 +1,20 @@
 <template>
   <div id="app">
-    <h1>My To-Do List</h1>
+    <h1>To-Do List</h1>
     <to-do-form @todo-added="addToDo"></to-do-form>
+    <h2 id="list-summary" ref="listSummary" tabindex="-1">{{ listSummary }}</h2>
+
     <ul aria-labelledby="list-summary" class="stack-large">
       <li v-for="item in ToDoItems" :key="item.id">
         <to-do-item
           :label="item.label"
           :done="item.done"
           :id="item.id"
-        ></to-do-item>
+          @checkbox-changed="updateDoneStatus(item.id)"
+          @item-deleted="deleteToDo(item.id)"
+          @item-edited="editToDo(item.id, $event)"
+        >
+        </to-do-item>
       </li>
     </ul>
   </div>
@@ -16,23 +22,21 @@
 
 <script>
 import ToDoItem from "./components/ToDoItem.vue";
-import ToDoForm from "./components/ToDoForm";
+import ToDoForm from "./components/ToDoForm.vue";
 import uniqueId from "lodash.uniqueid";
 
 export default {
-  name: "App",
+  name: "app",
   components: { ToDoItem, ToDoForm },
 
   data() {
     return {
       ToDoItems: [
-        { label: "Learn Vue", done: false },
         {
-          label: "Create a Vue project with the CLI",
+          id: uniqueId("todo-"),
+          label: "Complete MDN Vue tutorial.",
           done: true,
         },
-        { label: "Have fun", done: true },
-        { label: "Create a to-do list", done: false },
       ],
     };
   },
@@ -44,19 +48,32 @@ export default {
         done: false,
       });
     },
+    updateDoneStatus(toDoId) {
+      const toDoToUpdate = this.ToDoItems.find((item) => item.id === toDoId);
+      toDoToUpdate.done = !toDoToUpdate.done;
+    },
+    deleteToDo(toDoId) {
+      const itemIndex = this.ToDoItems.findIndex((item) => item.id === toDoId);
+      this.ToDoItems.splice(itemIndex, 1);
+      this.$refs.listSummary.focus();
+    },
+    editToDo(toDoId, newLabel) {
+      const toDoToEdit = this.ToDoItems.find((item) => item.id === toDoId);
+      toDoToEdit.label = newLabel;
+    },
+  },
+  computed: {
+    listSummary() {
+      const numberFinishedItems = this.ToDoItems.filter(
+        (item) => item.done
+      ).length;
+      return `${numberFinishedItems} out of ${this.ToDoItems.length} items completed`;
+    },
   },
 };
 </script>
 
 <style>
-/* #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-} */
 /* Global styles */
 .btn {
   padding: 0.8rem 1rem 0.7rem;
