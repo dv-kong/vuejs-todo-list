@@ -1,4 +1,6 @@
 # vue-todo-list
+A simple Vue.js To Do List made with MDN Vue tutorial.
+https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_getting_started
 
 ## Project setup
 ```
