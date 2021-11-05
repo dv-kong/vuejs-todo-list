@@ -1,6 +1,18 @@
 <template>
   <div id="app">
-    <h1>To-Do List</h1>
+    <div class="interactive" v-on:click="editingListName = !editingListName">
+      <h1>{{ listName }}</h1>
+    </div>
+    <div v-if="editingListName">
+      <input class="input__lg" v-model="newListName" :placeholder="listName" />
+      <button
+        class="btn btn__primary btn__lg"
+        v-on:click="editListName(newListName)"
+      >
+        Save
+      </button>
+    </div>
+
     <to-do-form @todo-added="addToDo"></to-do-form>
     <h2 id="list-summary" ref="listSummary" tabindex="-1">{{ listSummary }}</h2>
 
@@ -38,6 +50,9 @@ export default {
           done: true,
         },
       ],
+      listName: "To-do List",
+      newListName: "",
+      editingListName: false,
     };
   },
   methods: {
@@ -60,6 +75,12 @@ export default {
     editToDo(toDoId, newLabel) {
       const toDoToEdit = this.ToDoItems.find((item) => item.id === toDoId);
       toDoToEdit.label = newLabel;
+    },
+    editListName(newListName) {
+      if (newListName) {
+        this.listName = newListName;
+      }
+      this.editingListName = false;
     },
   },
   computed: {
@@ -181,5 +202,8 @@ export default {
   text-align: center;
   margin: 0;
   margin-bottom: 1rem;
+}
+.interactive {
+  cursor: pointer;
 }
 </style>

@@ -12,6 +12,7 @@
       autocomplete="off"
       v-model.lazy.trim="label"
       class="input__lg"
+      placeholder="Type your new task here..."
     />
     <button type="submit" class="btn btn__primary btn__lg">Add</button>
   </form>
